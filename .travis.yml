@@ -9,5 +9,9 @@ before_install:
   - export PATH=${MVN_HOME}/bin/:${PATH}
   - mvn --version
 
+cache:
+  directories:
+  - $HOME/.m2
+
 script: mvn clean install
 
