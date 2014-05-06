@@ -34,6 +34,8 @@ public abstract class AbstractReportBean implements IDashBoardReportBean, Clonea
     private long id;
 
     private DashBoardMavenProject mavenProject;
+
+    private String branchName;
     /**
      *
      *
@@ -94,6 +96,15 @@ public abstract class AbstractReportBean implements IDashBoardReportBean, Clonea
     {
         this.mavenProject = mavenProject;
     }
+
+    public String getBranchName() {
+        return branchName;
+    }
+
+    public void setBranchName(String branchName) {
+        this.branchName = branchName;
+    }
+
     protected double getPercentageValue( int numerator, int denominator )
     {
         double percentage = 0.0d;

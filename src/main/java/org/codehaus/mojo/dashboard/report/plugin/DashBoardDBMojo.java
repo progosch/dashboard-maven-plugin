@@ -67,6 +67,9 @@ public class DashBoardDBMojo extends AbstractDashBoardMojo
                 long start = System.currentTimeMillis();
 
                 this.getLog().info("DashBoardDBMojo project = " + this.project.getName());
+                if(branchName != null && !"".equals(branchName)) {
+                    this.getLog().info("Branch name = " + this.branchName);
+                }
                 this.getLog().info("DashBoardDBMojo nb modules = " + this.project.getModules().size());
                 this.getLog().info("DashBoardDBMojo is root = " + this.project.isExecutionRoot());
                 this.getLog().info("DashBoardDBMojo base directory = " + this.project.getBasedir());
@@ -155,6 +158,7 @@ public class DashBoardDBMojo extends AbstractDashBoardMojo
             if (report != null)
             {
                 report.setMavenProject(mavenProject);
+                report.setBranchName(branchName);
             }
         }
         Set modules = mavenProject.getModules();

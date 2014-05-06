@@ -34,7 +34,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
-
 import org.codehaus.doxia.site.renderer.SiteRenderer;
 import org.codehaus.mojo.dashboard.report.plugin.beans.DashBoardMavenProject;
 import org.codehaus.mojo.dashboard.report.plugin.configuration.Configuration;
@@ -231,6 +230,14 @@ public class DashBoardReportMojo extends AbstractMavenReport
      */
     private boolean generateGraphs;
 
+    /**
+     * Parameter containing branch name. It allows us to track statistics for given branch.
+     * (Summary and detailled) as only one.
+     *
+     * @parameter expression="${branchName}"
+     */
+    private String branchName;
+
     private DashBoardUtils dashBoardUtils;
 
     private Locale locale;
@@ -250,6 +257,9 @@ public class DashBoardReportMojo extends AbstractMavenReport
         this.locator.setOutputDirectory( new File( this.project.getBuild().getDirectory() ) );
         // Thanks end.
         this.getLog().info( "MultiReportMojo project = " + this.project.getName() );
+        if(this.project != null && !"".equals(getBranchName())) {
+            this.getLog().info("Branch name = " + this.getBranchName());
+        }
         this.getLog().info( "MultiReportMojo nb modules = " + this.project.getModules().size() );
         this.getLog().info( "MultiReportMojo base directory = " + this.project.getBasedir() );
         this.getLog().info( "MultiReportMojo output directory = " + this.outputDirectory );
@@ -280,6 +290,7 @@ public class DashBoardReportMojo extends AbstractMavenReport
             mavenProject =
                 this.dashBoardUtils.getDashBoardMavenProject( this.project, this.dashboardDataFile, generatedDate );
             this.dashBoardUtils.saveXMLDashBoardReport( this.project, mavenProject, this.dashboardDataFile );
+            mavenProject.setBranchName(this.branchName);
 
             if ( mavenProject != null )
             {
@@ -462,6 +473,11 @@ public class DashBoardReportMojo extends AbstractMavenReport
     public String getOutputName()
     {
         return this.outputName;
+    }
+
+    public String getBranchName()
+    {
+        return branchName;
     }
 
     public ResourceBundle getBundle( Locale locale )

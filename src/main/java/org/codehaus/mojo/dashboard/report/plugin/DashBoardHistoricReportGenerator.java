@@ -339,13 +339,29 @@ public class DashBoardHistoricReportGenerator extends AbstractDashBoardGenerator
                     String namedQuery = "";
                     if ( this.keepVersionAsDiscriminantCriteria )
                     {
-                        namedQuery =
-                            "org.codehaus.mojo.dashboard.report.plugin.beans.SurefireReportBean.getSurefireByPeriodByVersion";
+                        if(this.mavenProject.getBranchName() == null)
+                        {
+                            namedQuery =
+                                "org.codehaus.mojo.dashboard.report.plugin.beans.SurefireReportBean.getSurefireByPeriodByVersion";
+                        }
+                        else
+                        {
+	                        namedQuery =
+			                    "org.codehaus.mojo.dashboard.report.plugin.beans.SurefireReportBean.getSurefireByPeriodByVersionByBranchName";
+                        }
                     }
                     else
                     {
-                        namedQuery =
-                            "org.codehaus.mojo.dashboard.report.plugin.beans.SurefireReportBean.getSurefireByPeriod";
+                        if(this.mavenProject.getBranchName() == null)
+                        {
+                             namedQuery =
+                                 "org.codehaus.mojo.dashboard.report.plugin.beans.SurefireReportBean.getSurefireByPeriod";
+                        }
+                        else
+                        {
+                             namedQuery =
+                                 "org.codehaus.mojo.dashboard.report.plugin.beans.SurefireReportBean.getSurefireByPeriodByBranchName";
+                        }
                     }
 
                     Query query = this.hibernateService.getSession().getNamedQuery( namedQuery );
@@ -353,6 +369,10 @@ public class DashBoardHistoricReportGenerator extends AbstractDashBoardGenerator
                     query.setParameter( "id", this.dashBoardMavenProjectID );
                     query.setParameter( "startdate", graph.getStartPeriodDate() );
                     query.setParameter( "enddate", graph.getEndPeriodDate() );
+                    if(this.mavenProject.getBranchName() != null)
+                    {
+                        query.setParameter( "branchName", this.mavenProject.getBranchName() );
+                    }
                     List result = query.list();
                     if ( !this.generateGraphs )
                     {
@@ -419,12 +439,25 @@ public class DashBoardHistoricReportGenerator extends AbstractDashBoardGenerator
                         chart1 = new SurefirePercentAxisDecorator( chart1, result );
                         if ( !this.keepVersionAsDiscriminantCriteria )
                         {
-                            String versionQuery =
-                                "org.codehaus.mojo.dashboard.report.plugin.beans.SurefireReportBean.getMarkerVersionByDate";
+                            String versionQuery = null;
+                            if(this.mavenProject.getBranchName() == null)
+                            {
+                                versionQuery =
+                                    "org.codehaus.mojo.dashboard.report.plugin.beans.SurefireReportBean.getMarkerVersionByDate";
+                            }
+                            else
+                            {
+                                 versionQuery =
+                                     "org.codehaus.mojo.dashboard.report.plugin.beans.SurefireReportBean.getMarkerVersionByDateByBranchName";
+                            }
                             query = this.hibernateService.getSession().getNamedQuery( versionQuery );
                             query.setParameter( "id", this.dashBoardMavenProjectID );
                             query.setParameter( "startdate", graph.getStartPeriodDate() );
                             query.setParameter( "enddate", graph.getEndPeriodDate() );
+                            if(this.mavenProject.getBranchName() != null)
+                            {
+                                query.setParameter( "branchName", this.mavenProject.getBranchName() );
+                            }
                             result = query.list();
                             chart1 = new MarkerTimeChartDecorator( chart1, result );
                         }
@@ -507,19 +540,39 @@ public class DashBoardHistoricReportGenerator extends AbstractDashBoardGenerator
                     String namedQuery = "";
                     if ( this.keepVersionAsDiscriminantCriteria )
                     {
-                        namedQuery =
-                            "org.codehaus.mojo.dashboard.report.plugin.beans.CloverReportBean.getCloverByPeriodByVersion";
+                        if(this.mavenProject.getBranchName() == null)
+                        {
+                            namedQuery =
+                                "org.codehaus.mojo.dashboard.report.plugin.beans.CloverReportBean.getCloverByPeriodByVersion";
+                        }
+                        else
+                        {
+                            namedQuery =
+                                "org.codehaus.mojo.dashboard.report.plugin.beans.CloverReportBean.getCloverByPeriodByVersionByBranchName";
+                        }
                     }
                     else
                     {
-                        namedQuery =
-                            "org.codehaus.mojo.dashboard.report.plugin.beans.CloverReportBean.getCloverByPeriod";
+                        if(this.mavenProject.getBranchName() == null)
+                        {
+                            namedQuery =
+                                "org.codehaus.mojo.dashboard.report.plugin.beans.CloverReportBean.getCloverByPeriod";
+                        }
+                        else
+                        {
+                            namedQuery =
+                                "org.codehaus.mojo.dashboard.report.plugin.beans.CloverReportBean.getCloverByPeriodByBranchName";
+                        }
                     }
 
                     Query query = this.hibernateService.getSession().getNamedQuery( namedQuery );
                     query.setParameter( "id", this.dashBoardMavenProjectID );
                     query.setParameter( "startdate", graph.getStartPeriodDate() );
                     query.setParameter( "enddate", graph.getEndPeriodDate() );
+                    if(this.mavenProject.getBranchName() != null)
+                    {
+                        query.setParameter( "branchName", this.mavenProject.getBranchName() );
+                    }
                     List result = query.list();
                     if ( !this.generateGraphs )
                     {
@@ -586,12 +639,25 @@ public class DashBoardHistoricReportGenerator extends AbstractDashBoardGenerator
                                                                                 graph.getEndPeriodDate() ) );
                         if ( !this.keepVersionAsDiscriminantCriteria )
                         {
-                            String versionQuery =
-                                "org.codehaus.mojo.dashboard.report.plugin.beans.CloverReportBean.getMarkerVersionByDate";
+                            String versionQuery = null;
+                            if(this.mavenProject.getBranchName() == null)
+                            {
+                                versionQuery =
+                                    "org.codehaus.mojo.dashboard.report.plugin.beans.CloverReportBean.getMarkerVersionByDate";
+                            }
+                            else
+                            {
+                                versionQuery =
+                                    "org.codehaus.mojo.dashboard.report.plugin.beans.CloverReportBean.getMarkerVersionByDateByBranchName";
+                            }
                             query = this.hibernateService.getSession().getNamedQuery( versionQuery );
                             query.setParameter( "id", this.dashBoardMavenProjectID );
                             query.setParameter( "startdate", graph.getStartPeriodDate() );
                             query.setParameter( "enddate", graph.getEndPeriodDate() );
+                            if(this.mavenProject.getBranchName() != null)
+                            {
+                                query.setParameter( "branchName", this.mavenProject.getBranchName() );
+                            }
                             result = query.list();
                             chart1 = new MarkerTimeChartDecorator( chart1, result );
                         }
@@ -669,19 +735,39 @@ public class DashBoardHistoricReportGenerator extends AbstractDashBoardGenerator
                     String namedQuery = "";
                     if ( this.keepVersionAsDiscriminantCriteria )
                     {
-                        namedQuery =
-                            "org.codehaus.mojo.dashboard.report.plugin.beans.CoberturaReportBean.getCoberturaByPeriodByVersion";
+                        if(this.mavenProject.getBranchName() == null)
+                        {
+                            namedQuery =
+                                "org.codehaus.mojo.dashboard.report.plugin.beans.CoberturaReportBean.getCoberturaByPeriodByVersion";
+                        }
+                        else
+                        {
+                            namedQuery =
+                                "org.codehaus.mojo.dashboard.report.plugin.beans.CoberturaReportBean.getCoberturaByPeriodByVersionByBranchName";
+                        }
                     }
                     else
                     {
-                        namedQuery =
-                            "org.codehaus.mojo.dashboard.report.plugin.beans.CoberturaReportBean.getCoberturaByPeriod";
+                        if(this.mavenProject.getBranchName() == null)
+                        {
+                            namedQuery =
+                                "org.codehaus.mojo.dashboard.report.plugin.beans.CoberturaReportBean.getCoberturaByPeriod";
+                        }
+                        else
+                        {
+                            namedQuery =
+                                "org.codehaus.mojo.dashboard.report.plugin.beans.CoberturaReportBean.getCoberturaByPeriodByBranchName";
+                        }
                     }
 
                     Query query = this.hibernateService.getSession().getNamedQuery( namedQuery );
                     query.setParameter( "id", this.dashBoardMavenProjectID );
                     query.setParameter( "startdate", graph.getStartPeriodDate() );
                     query.setParameter( "enddate", graph.getEndPeriodDate() );
+                    if(this.mavenProject.getBranchName() != null)
+                    {
+                        query.setParameter( "branchName", this.mavenProject.getBranchName() );
+                    }
                     List result = query.list();
 
                     if ( !this.generateGraphs )
@@ -735,12 +821,25 @@ public class DashBoardHistoricReportGenerator extends AbstractDashBoardGenerator
                                                                                    graph.getEndPeriodDate() ) );
                         if ( !this.keepVersionAsDiscriminantCriteria )
                         {
-                            String versionQuery =
-                                "org.codehaus.mojo.dashboard.report.plugin.beans.CoberturaReportBean.getMarkerVersionByDate";
+                            String versionQuery = null;
+                            if(this.mavenProject.getBranchName() == null)
+                            {
+                                versionQuery =
+                                    "org.codehaus.mojo.dashboard.report.plugin.beans.CoberturaReportBean.getMarkerVersionByDate";
+                            }
+                            else
+                            {
+                                versionQuery =
+                                    "org.codehaus.mojo.dashboard.report.plugin.beans.CoberturaReportBean.getMarkerVersionByDateByBranchName";
+                            }
                             query = this.hibernateService.getSession().getNamedQuery( versionQuery );
                             query.setParameter( "id", this.dashBoardMavenProjectID );
                             query.setParameter( "startdate", graph.getStartPeriodDate() );
                             query.setParameter( "enddate", graph.getEndPeriodDate() );
+                            if(this.mavenProject.getBranchName() != null)
+                            {
+                                query.setParameter( "branchName", this.mavenProject.getBranchName() );
+                            }
                             result = query.list();
                             chart1 = new MarkerTimeChartDecorator( chart1, result );
                         }
@@ -817,18 +916,37 @@ public class DashBoardHistoricReportGenerator extends AbstractDashBoardGenerator
                     String namedQuery = "";
                     if ( this.keepVersionAsDiscriminantCriteria )
                     {
-                        namedQuery =
-                            "org.codehaus.mojo.dashboard.report.plugin.beans.PmdReportBean.getPmdByPeriodByVersion";
+                        if(this.mavenProject.getBranchName() == null)
+                        {
+                            namedQuery =
+                                "org.codehaus.mojo.dashboard.report.plugin.beans.PmdReportBean.getPmdByPeriodByVersion";
+                        }
+                        else
+                        {
+                            namedQuery =
+                                "org.codehaus.mojo.dashboard.report.plugin.beans.PmdReportBean.getPmdByPeriodByVersionByBranchName";
+                        }
                     }
                     else
                     {
-                        namedQuery = "org.codehaus.mojo.dashboard.report.plugin.beans.PmdReportBean.getPmdByPeriod";
+                        if(this.mavenProject.getBranchName() == null)
+                        {
+                            namedQuery = "org.codehaus.mojo.dashboard.report.plugin.beans.PmdReportBean.getPmdByPeriod";
+                        }
+                        else
+                        {
+                            namedQuery = "org.codehaus.mojo.dashboard.report.plugin.beans.PmdReportBean.getPmdByPeriodByBranchName";
+                        }
                     }
 
                     Query query = this.hibernateService.getSession().getNamedQuery( namedQuery );
                     query.setParameter( "id", this.dashBoardMavenProjectID );
                     query.setParameter( "startdate", graph.getStartPeriodDate() );
                     query.setParameter( "enddate", graph.getEndPeriodDate() );
+                    if(this.mavenProject.getBranchName() != null)
+                    {
+                        query.setParameter( "branchName", this.mavenProject.getBranchName() );
+                    }
                     List result = query.list();
                     if ( !this.generateGraphs )
                     {
@@ -879,12 +997,25 @@ public class DashBoardHistoricReportGenerator extends AbstractDashBoardGenerator
                                                                              graph.getEndPeriodDate() ) );
                         if ( !this.keepVersionAsDiscriminantCriteria )
                         {
-                            String versionQuery =
-                                "org.codehaus.mojo.dashboard.report.plugin.beans.PmdReportBean.getMarkerVersionByDate";
+                            String versionQuery = null;
+                            if(this.mavenProject.getBranchName() == null)
+                            {
+                                versionQuery =
+                                    "org.codehaus.mojo.dashboard.report.plugin.beans.PmdReportBean.getMarkerVersionByDate";
+                            }
+                            else
+                            {
+                                versionQuery =
+                                    "org.codehaus.mojo.dashboard.report.plugin.beans.PmdReportBean.getMarkerVersionByDateByBranchName";
+                            }
                             query = this.hibernateService.getSession().getNamedQuery( versionQuery );
                             query.setParameter( "id", this.dashBoardMavenProjectID );
                             query.setParameter( "startdate", graph.getStartPeriodDate() );
                             query.setParameter( "enddate", graph.getEndPeriodDate() );
+                            if(this.mavenProject.getBranchName() != null)
+                            {
+                                query.setParameter( "branchName", this.mavenProject.getBranchName() );
+                            }
                             result = query.list();
                             chart1 = new MarkerTimeChartDecorator( chart1, result );
                         }
@@ -960,18 +1091,37 @@ public class DashBoardHistoricReportGenerator extends AbstractDashBoardGenerator
                     String namedQuery = "";
                     if ( this.keepVersionAsDiscriminantCriteria )
                     {
-                        namedQuery =
-                            "org.codehaus.mojo.dashboard.report.plugin.beans.CpdReportBean.getCpdByPeriodByVersion";
+                        if(this.mavenProject.getBranchName() == null)
+                        {
+                            namedQuery =
+                                "org.codehaus.mojo.dashboard.report.plugin.beans.CpdReportBean.getCpdByPeriodByVersion";
+                        }
+                        else
+                        {
+                            namedQuery =
+                                "org.codehaus.mojo.dashboard.report.plugin.beans.CpdReportBean.getCpdByPeriodByVersionByBranchName";
+                        }
                     }
                     else
                     {
-                        namedQuery = "org.codehaus.mojo.dashboard.report.plugin.beans.CpdReportBean.getCpdByPeriod";
+                        if(this.mavenProject.getBranchName() == null)
+                        {
+                            namedQuery = "org.codehaus.mojo.dashboard.report.plugin.beans.CpdReportBean.getCpdByPeriod";
+                        }
+                        else
+                        {
+                            namedQuery = "org.codehaus.mojo.dashboard.report.plugin.beans.CpdReportBean.getCpdByPeriodByBranchName";
+	                    }
                     }
 
                     Query query = this.hibernateService.getSession().getNamedQuery( namedQuery );
                     query.setParameter( "id", this.dashBoardMavenProjectID );
                     query.setParameter( "startdate", graph.getStartPeriodDate() );
                     query.setParameter( "enddate", graph.getEndPeriodDate() );
+                    if(this.mavenProject.getBranchName() != null)
+                    {
+                        query.setParameter( "branchName", this.mavenProject.getBranchName() );
+                    }
                     List result = query.list();
                     if ( !this.generateGraphs )
                     {
@@ -1022,12 +1172,25 @@ public class DashBoardHistoricReportGenerator extends AbstractDashBoardGenerator
                                                                              graph.getEndPeriodDate() ) );
                         if ( !this.keepVersionAsDiscriminantCriteria )
                         {
-                            String versionQuery =
-                                "org.codehaus.mojo.dashboard.report.plugin.beans.CpdReportBean.getMarkerVersionByDate";
+                            String versionQuery = null;
+                            if(this.mavenProject.getBranchName() == null)
+                            {
+                                versionQuery =
+                                    "org.codehaus.mojo.dashboard.report.plugin.beans.CpdReportBean.getMarkerVersionByDate";
+                            }
+                            else
+                            {
+                                versionQuery =
+                                    "org.codehaus.mojo.dashboard.report.plugin.beans.CpdReportBean.getMarkerVersionByDateByBranchName";
+                            }
                             query = this.hibernateService.getSession().getNamedQuery( versionQuery );
                             query.setParameter( "id", this.dashBoardMavenProjectID );
                             query.setParameter( "startdate", graph.getStartPeriodDate() );
                             query.setParameter( "enddate", graph.getEndPeriodDate() );
+                            if(this.mavenProject.getBranchName() != null)
+                            {
+                                query.setParameter( "branchName", this.mavenProject.getBranchName() );
+                            }
                             result = query.list();
                             chart1 = new MarkerTimeChartDecorator( chart1, result );
                         }
@@ -1101,19 +1264,39 @@ public class DashBoardHistoricReportGenerator extends AbstractDashBoardGenerator
                     String namedQuery = "";
                     if ( this.keepVersionAsDiscriminantCriteria )
                     {
-                        namedQuery =
-                            "org.codehaus.mojo.dashboard.report.plugin.beans.CheckstyleReportBean.getCheckstyleByPeriodByVersion";
+                        if(this.mavenProject.getBranchName() == null)
+                        {
+                            namedQuery =
+                                "org.codehaus.mojo.dashboard.report.plugin.beans.CheckstyleReportBean.getCheckstyleByPeriodByVersion";
+                        }
+                        else
+                        {
+                            namedQuery =
+                                "org.codehaus.mojo.dashboard.report.plugin.beans.CheckstyleReportBean.getCheckstyleByPeriodByVersionByBranchName";
+                        }
                     }
                     else
                     {
-                        namedQuery =
-                            "org.codehaus.mojo.dashboard.report.plugin.beans.CheckstyleReportBean.getCheckstyleByPeriod";
+                        if(this.mavenProject.getBranchName() == null)
+                        {
+                            namedQuery =
+                                "org.codehaus.mojo.dashboard.report.plugin.beans.CheckstyleReportBean.getCheckstyleByPeriod";
+                        }
+                        else
+                        {
+                            namedQuery =
+                                "org.codehaus.mojo.dashboard.report.plugin.beans.CheckstyleReportBean.getCheckstyleByPeriodByBranchName";
+                        }
                     }
 
                     Query query = this.hibernateService.getSession().getNamedQuery( namedQuery );
                     query.setParameter( "id", this.dashBoardMavenProjectID );
                     query.setParameter( "startdate", graph.getStartPeriodDate() );
                     query.setParameter( "enddate", graph.getEndPeriodDate() );
+                    if(this.mavenProject.getBranchName() != null)
+                    {
+                        query.setParameter( "branchName", this.mavenProject.getBranchName() );
+                    }
                     List result = query.list();
                     if ( !this.generateGraphs )
                     {
@@ -1202,12 +1385,25 @@ public class DashBoardHistoricReportGenerator extends AbstractDashBoardGenerator
                                                                                     graph.getEndPeriodDate() ) );
                         if ( !this.keepVersionAsDiscriminantCriteria )
                         {
-                            String versionQuery =
-                                "org.codehaus.mojo.dashboard.report.plugin.beans.CheckstyleReportBean.getMarkerVersionByDate";
+                            String versionQuery = null;
+                            if(this.mavenProject.getBranchName() == null)
+                            {
+                                versionQuery =
+                                    "org.codehaus.mojo.dashboard.report.plugin.beans.CheckstyleReportBean.getMarkerVersionByDate";
+                            }
+                            else
+                            {
+                                versionQuery =
+                                    "org.codehaus.mojo.dashboard.report.plugin.beans.CheckstyleReportBean.getMarkerVersionByDateByBranchName";
+                            }
                             query = this.hibernateService.getSession().getNamedQuery( versionQuery );
                             query.setParameter( "id", this.dashBoardMavenProjectID );
                             query.setParameter( "startdate", graph.getStartPeriodDate() );
                             query.setParameter( "enddate", graph.getEndPeriodDate() );
+                            if(this.mavenProject.getBranchName() != null)
+                            {
+                                query.setParameter( "branchName", this.mavenProject.getBranchName() );
+                            }
                             result = query.list();
                             chart1 = new MarkerTimeChartDecorator( chart1, result );
                         }
@@ -1285,19 +1481,39 @@ public class DashBoardHistoricReportGenerator extends AbstractDashBoardGenerator
                     String namedQuery = "";
                     if ( this.keepVersionAsDiscriminantCriteria )
                     {
-                        namedQuery =
-                            "org.codehaus.mojo.dashboard.report.plugin.beans.FindBugsReportBean.getFindBugsByPeriodByVersion";
+                        if(this.mavenProject.getBranchName() == null)
+                        {
+	                        namedQuery =
+	                            "org.codehaus.mojo.dashboard.report.plugin.beans.FindBugsReportBean.getFindBugsByPeriodByVersion";
+                        }
+                        else
+                        {
+                            namedQuery =
+                                    "org.codehaus.mojo.dashboard.report.plugin.beans.FindBugsReportBean.getFindBugsByPeriodByVersionByBranchName";
+                        }
                     }
                     else
                     {
-                        namedQuery =
-                            "org.codehaus.mojo.dashboard.report.plugin.beans.FindBugsReportBean.getFindBugsByPeriod";
+                        if(this.mavenProject.getBranchName() == null)
+                        {
+                            namedQuery =
+                                "org.codehaus.mojo.dashboard.report.plugin.beans.FindBugsReportBean.getFindBugsByPeriod";
+                        }
+                        else
+                        {
+                            namedQuery =
+                                "org.codehaus.mojo.dashboard.report.plugin.beans.FindBugsReportBean.getFindBugsByPeriodByBranchName";
+                        }
                     }
 
                     Query query = this.hibernateService.getSession().getNamedQuery( namedQuery );
                     query.setParameter( "id", this.dashBoardMavenProjectID );
                     query.setParameter( "startdate", graph.getStartPeriodDate() );
                     query.setParameter( "enddate", graph.getEndPeriodDate() );
+                    if(this.mavenProject.getBranchName() != null)
+                    {
+                        query.setParameter( "branchName", this.mavenProject.getBranchName() );
+                    }
                     List result = query.list();
                     if ( !this.generateGraphs )
                     {
@@ -1351,12 +1567,25 @@ public class DashBoardHistoricReportGenerator extends AbstractDashBoardGenerator
                                                                                   graph.getEndPeriodDate() ) );
                         if ( !this.keepVersionAsDiscriminantCriteria )
                         {
-                            String versionQuery =
-                                "org.codehaus.mojo.dashboard.report.plugin.beans.FindBugsReportBean.getMarkerVersionByDate";
+                            String versionQuery = null;
+                            if(this.mavenProject.getBranchName() == null)
+                            {
+                                versionQuery =
+                                    "org.codehaus.mojo.dashboard.report.plugin.beans.FindBugsReportBean.getMarkerVersionByDate";
+                            }
+                            else
+                            {
+                                versionQuery =
+                                    "org.codehaus.mojo.dashboard.report.plugin.beans.FindBugsReportBean.getMarkerVersionByDateByBranchName";
+                            }
                             query = this.hibernateService.getSession().getNamedQuery( versionQuery );
                             query.setParameter( "id", this.dashBoardMavenProjectID );
                             query.setParameter( "startdate", graph.getStartPeriodDate() );
                             query.setParameter( "enddate", graph.getEndPeriodDate() );
+                            if(this.mavenProject.getBranchName() != null)
+                            {
+                                query.setParameter( "branchName", this.mavenProject.getBranchName() );
+                            }
                             result = query.list();
                             chart1 = new MarkerTimeChartDecorator( chart1, result );
                         }
@@ -1432,19 +1661,39 @@ public class DashBoardHistoricReportGenerator extends AbstractDashBoardGenerator
                     String namedQuery = "";
                     if ( this.keepVersionAsDiscriminantCriteria )
                     {
-                        namedQuery =
-                            "org.codehaus.mojo.dashboard.report.plugin.beans.TagListReportBean.getTagListByPeriodByVersion";
+                        if(this.mavenProject.getBranchName() == null)
+                        {
+                            namedQuery =
+                                "org.codehaus.mojo.dashboard.report.plugin.beans.TagListReportBean.getTagListByPeriodByVersion";
+                        }
+                        else
+                        {
+                            namedQuery =
+                                "org.codehaus.mojo.dashboard.report.plugin.beans.TagListReportBean.getTagListByPeriodByVersionByBranchName";
+                        }
                     }
                     else
                     {
-                        namedQuery =
-                            "org.codehaus.mojo.dashboard.report.plugin.beans.TagListReportBean.getTagListByPeriod";
+                        if(this.mavenProject.getBranchName() == null)
+                        {
+                            namedQuery =
+                                "org.codehaus.mojo.dashboard.report.plugin.beans.TagListReportBean.getTagListByPeriod";
+                        }
+                        else
+                        {
+                            namedQuery =
+                                "org.codehaus.mojo.dashboard.report.plugin.beans.TagListReportBean.getTagListByPeriodByBranchName";
+                        }
                     }
 
                     Query query = this.hibernateService.getSession().getNamedQuery( namedQuery );
                     query.setParameter( "id", this.dashBoardMavenProjectID );
                     query.setParameter( "startdate", graph.getStartPeriodDate() );
                     query.setParameter( "enddate", graph.getEndPeriodDate() );
+                    if(this.mavenProject.getBranchName() != null)
+                    {
+                        query.setParameter( "branchName", this.mavenProject.getBranchName() );
+                    }
                     List result = query.list();
                     if ( !this.generateGraphs )
                     {
@@ -1493,12 +1742,25 @@ public class DashBoardHistoricReportGenerator extends AbstractDashBoardGenerator
                                                                                  graph.getEndPeriodDate() ) );
                         if ( !this.keepVersionAsDiscriminantCriteria )
                         {
-                            String versionQuery =
-                                "org.codehaus.mojo.dashboard.report.plugin.beans.TagListReportBean.getMarkerVersionByDate";
+                            String versionQuery = null;
+                            if(this.mavenProject.getBranchName() == null)
+                            {
+                                versionQuery =
+                                    "org.codehaus.mojo.dashboard.report.plugin.beans.TagListReportBean.getMarkerVersionByDate";
+                            }
+                            else
+                            {
+                                versionQuery =
+                                    "org.codehaus.mojo.dashboard.report.plugin.beans.TagListReportBean.getMarkerVersionByDateByBranchName";
+                            }
                             query = this.hibernateService.getSession().getNamedQuery( versionQuery );
                             query.setParameter( "id", this.dashBoardMavenProjectID );
                             query.setParameter( "startdate", graph.getStartPeriodDate() );
                             query.setParameter( "enddate", graph.getEndPeriodDate() );
+                            if(this.mavenProject.getBranchName() != null)
+                            {
+                                query.setParameter( "branchName", this.mavenProject.getBranchName() );
+                            }
                             result = query.list();
                             chart1 = new MarkerTimeChartDecorator( chart1, result );
                         }

@@ -52,6 +52,9 @@ public class DashBoardMavenProject
     
     
     private transient Map reportsByType = new Hashtable();
+
+    private transient String branchName;
+
     /**
      * 
      *
@@ -161,6 +164,17 @@ public class DashBoardMavenProject
     {
         this.modules = modules;
     }
+
+    public String getBranchName()
+    {
+        return branchName;
+    }
+
+    public void setBranchName(String branchName)
+    {
+        this.branchName = branchName;
+    }
+
     /**
      * 
      * @param report

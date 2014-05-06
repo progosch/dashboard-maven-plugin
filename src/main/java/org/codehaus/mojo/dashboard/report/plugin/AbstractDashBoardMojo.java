@@ -120,6 +120,14 @@ public abstract class AbstractDashBoardMojo extends AbstractMojo
     protected String password;
 
     /**
+     * Parameter containing branch name. It allows us to track statistics for given branch.
+     * (Summary and detailled) as only one.
+     *
+     * @parameter expression="${branchName}"
+     */
+    protected String branchName;
+
+    /**
      * Project builder
      * 
      * @component

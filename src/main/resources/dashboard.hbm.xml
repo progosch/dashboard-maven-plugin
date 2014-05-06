@@ -40,6 +40,8 @@
 			class="DashBoardMavenProject" />
 		<property name="dateGeneration" column="dateGeneration"
 			type="timestamp" />
+		<property name="branchName" column="branchName"
+            type="string" />
 	</class>
 	<!-- org.codehaus.mojo.dashboard.report.plugin.beans.CheckstyleReportBean root -->
 	<!-- table="CheckstyleReportBean"  -->
@@ -57,12 +59,22 @@
 		</query>
 		<query name="getCheckstyleByPeriodByVersion">
 			<![CDATA[
-		select c from CheckstyleReportBean c,DashBoardMavenProject m where c.mavenProject = m and m.id = :id and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate
+		select c from CheckstyleReportBean c,DashBoardMavenProject m where c.mavenProject = m and m.id = :id and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate and c.branchName is null
 		]]>
 		</query>
-		<query name="getCheckstyleByPeriod">
+		<query name="getCheckstyleByPeriodByVersionByBranchName">
+            <![CDATA[
+        select c from CheckstyleReportBean c,DashBoardMavenProject m where c.mavenProject = m and m.id = :id and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate and c.branchName = :branchName
+        ]]>
+        </query>
+        <query name="getCheckstyleByPeriod">
+            <![CDATA[
+        select c from CheckstyleReportBean c, DashBoardMavenProject m, DashBoardMavenProject m2 where c.mavenProject = m and m2.id = :id and m2.groupId = m.groupId and m2.artifactId = m.artifactId and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate and c.branchName is null
+        ]]>
+        </query>
+		<query name="getCheckstyleByPeriodByBranchName">
 			<![CDATA[
-        select c from CheckstyleReportBean c, DashBoardMavenProject m, DashBoardMavenProject m2 where c.mavenProject = m and m2.id = :id and m2.groupId = m.groupId and m2.artifactId = m.artifactId and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate
+        select c from CheckstyleReportBean c, DashBoardMavenProject m, DashBoardMavenProject m2 where c.mavenProject = m and m2.id = :id and m2.groupId = m.groupId and m2.artifactId = m.artifactId and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate and c.branchName = :branchName
         ]]>
 		</query>
 		<query name="getMarkerVersionByDate">
@@ -79,10 +91,30 @@
 		    and m2.groupId = m.groupId    
 		    and m2.artifactId = m.artifactId
 		  )
+		  and c.branchName is null
 		  group by c.mavenProject.version 
 		  having min(c.dateGeneration) between :startdate and :enddate
         ]]>
 		</query>
+		<query name="getMarkerVersionByDateByBranchName">
+            <![CDATA[
+        select c.mavenProject.version, min(c.dateGeneration) from CheckstyleReportBean c
+        where c.mavenProject.id in (
+           select
+            m.id   
+           from
+            DashBoardMavenProject m,
+            DashBoardMavenProject m2   
+           where
+            m2.id = :id    
+            and m2.groupId = m.groupId    
+            and m2.artifactId = m.artifactId
+          )
+          and c.branchName = :branchName
+          group by c.mavenProject.version 
+          having min(c.dateGeneration) between :startdate and :enddate
+        ]]>
+        </query>
 	</union-subclass>
 	<!-- org.codehaus.mojo.dashboard.report.plugin.beans.CoberturaReportBean root -->
 	<!-- table="CoberturaReportBean"  -->
@@ -108,14 +140,24 @@
 		</query>
 		<query name="getCoberturaByPeriodByVersion">
 			<![CDATA[
-		select c from CoberturaReportBean c,DashBoardMavenProject m where c.mavenProject = m and m.id = :id and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate
+		select c from CoberturaReportBean c,DashBoardMavenProject m where c.mavenProject = m and m.id = :id and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate and c.branchName is null
 		]]>
 		</query>
+		<query name="getCoberturaByPeriodByVersionByBranchName">
+            <![CDATA[
+        select c from CoberturaReportBean c,DashBoardMavenProject m where c.mavenProject = m and m.id = :id and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate and c.branchName = :branchName
+        ]]>
+        </query>
 		<query name="getCoberturaByPeriod">
 			<![CDATA[
-        select c from CoberturaReportBean c, DashBoardMavenProject m, DashBoardMavenProject m2 where c.mavenProject = m and m2.id = :id and m2.groupId = m.groupId and m2.artifactId = m.artifactId and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate
+        select c from CoberturaReportBean c, DashBoardMavenProject m, DashBoardMavenProject m2 where c.mavenProject = m and m2.id = :id and m2.groupId = m.groupId and m2.artifactId = m.artifactId and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate and c.branchName is null
         ]]>
 		</query>
+        <query name="getCoberturaByPeriodByBranchName">
+            <![CDATA[
+        select c from CoberturaReportBean c, DashBoardMavenProject m, DashBoardMavenProject m2 where c.mavenProject = m and m2.id = :id and m2.groupId = m.groupId and m2.artifactId = m.artifactId and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate and c.branchName = :branchName
+        ]]>
+        </query>
 		<query name="getMarkerVersionByDate">
 			<!-- 
 				select c.mavenProject.version, min(c.dateGeneration) from CoberturaReportBean c, DashBoardMavenProject m , DashBoardMavenProject m2 where c.mavenProject = m and m2.id = :id and m2.groupId = m.groupId and m2.artifactId = m.artifactId and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate group by c.mavenProject.version
@@ -133,10 +175,30 @@
 		    and m2.groupId = m.groupId    
 		    and m2.artifactId = m.artifactId
 		  )
+		  and c.branchName is null
 		  group by c.mavenProject.version 
 		  having min(c.dateGeneration) between :startdate and :enddate
         ]]>
 		</query>
+		      <query name="getMarkerVersionByDateByBranchName">
+            <![CDATA[
+        select c.mavenProject.version, min(c.dateGeneration) from CoberturaReportBean c
+        where c.mavenProject.id in (
+           select
+            m.id   
+           from
+            DashBoardMavenProject m,
+            DashBoardMavenProject m2   
+           where
+            m2.id = :id    
+            and m2.groupId = m.groupId    
+            and m2.artifactId = m.artifactId
+          )
+          and c.branchName = :branchName
+          group by c.mavenProject.version 
+          having min(c.dateGeneration) between :startdate and :enddate
+        ]]>
+        </query>
 		<!--  select c.mavenProject.version, min(c.dateGeneration) from CoberturaReportBean c, DashBoardMavenProject m , DashBoardMavenProject m2 where c.mavenProject = m and m2.id = 37 and m2.groupId = m.groupId and m2.artifactId = m.artifactId and c.dateGeneration >= '2008-03-15' and c.dateGeneration <= '2008-04-15' group by c.mavenProject.version -->
 	</union-subclass>
 	<!-- org.codehaus.mojo.dashboard.report.plugin.beans.CloverReportBean root -->
@@ -162,12 +224,22 @@
 		</query>
 		<query name="getCloverByPeriodByVersion">
 			<![CDATA[
-		select c from CloverReportBean c,DashBoardMavenProject m where c.mavenProject = m and m.id = :id and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate
+		select c from CloverReportBean c,DashBoardMavenProject m where c.mavenProject = m and m.id = :id and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate and c.branchName is null
 		]]>
 		</query>
-		<query name="getCloverByPeriod">
+        <query name="getCloverByPeriodByVersionByBranchName">
+            <![CDATA[
+        select c from CloverReportBean c,DashBoardMavenProject m where c.mavenProject = m and m.id = :id and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate and c.branchName = :branchName
+        ]]>
+        </query>
+        <query name="getCloverByPeriod">
+            <![CDATA[
+        select c from CloverReportBean c, DashBoardMavenProject m, DashBoardMavenProject m2 where c.mavenProject = m and m2.id = :id and m2.groupId = m.groupId and m2.artifactId = m.artifactId and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate and c.branchName is null
+        ]]>
+        </query>
+		<query name="getCloverByPeriodByBranchName">
 			<![CDATA[
-        select c from CloverReportBean c, DashBoardMavenProject m, DashBoardMavenProject m2 where c.mavenProject = m and m2.id = :id and m2.groupId = m.groupId and m2.artifactId = m.artifactId and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate
+        select c from CloverReportBean c, DashBoardMavenProject m, DashBoardMavenProject m2 where c.mavenProject = m and m2.id = :id and m2.groupId = m.groupId and m2.artifactId = m.artifactId and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate and c.branchName = :branchName
         ]]>
 		</query>
 		<query name="getMarkerVersionByDate">
@@ -184,10 +256,30 @@
 		    and m2.groupId = m.groupId    
 		    and m2.artifactId = m.artifactId
 		  )
+		  and c.branchName is null
 		  group by c.mavenProject.version 
 		  having min(c.dateGeneration) between :startdate and :enddate
         ]]>
 		</query>
+		      <query name="getMarkerVersionByDateByBranchName">
+            <![CDATA[
+        select c.mavenProject.version, min(c.dateGeneration) from CloverReportBean c
+        where c.mavenProject.id in (
+           select
+            m.id   
+           from
+            DashBoardMavenProject m,
+            DashBoardMavenProject m2   
+           where
+            m2.id = :id    
+            and m2.groupId = m.groupId    
+            and m2.artifactId = m.artifactId
+          )
+          and c.branchName = :branchName
+          group by c.mavenProject.version 
+          having min(c.dateGeneration) between :startdate and :enddate
+        ]]>
+        </query>
 	</union-subclass>
 	<!-- org.codehaus.mojo.dashboard.report.plugin.beans.CpdReportBean root -->
 	<!-- table="CpdReportBean"  -->
@@ -202,12 +294,22 @@
 		</query>
 		<query name="getCpdByPeriodByVersion">
 			<![CDATA[
-		select c from CpdReportBean c,DashBoardMavenProject m where c.mavenProject = m and m.id = :id and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate
+		select c from CpdReportBean c,DashBoardMavenProject m where c.mavenProject = m and m.id = :id and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate and c.branchName is null
 		]]>
 		</query>
-		<query name="getCpdByPeriod">
+        <query name="getCpdByPeriodByVersionByBranchName">
+            <![CDATA[
+        select c from CpdReportBean c,DashBoardMavenProject m where c.mavenProject = m and m.id = :id and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate and c.branchName = :branchName
+        ]]>
+        </query>
+        <query name="getCpdByPeriod">
+            <![CDATA[
+        select c from CpdReportBean c, DashBoardMavenProject m, DashBoardMavenProject m2 where c.mavenProject = m and m2.id = :id and m2.groupId = m.groupId and m2.artifactId = m.artifactId and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate and c.branchName is null
+        ]]>
+        </query>
+		<query name="getCpdByPeriodByBranchName">
 			<![CDATA[
-        select c from CpdReportBean c, DashBoardMavenProject m, DashBoardMavenProject m2 where c.mavenProject = m and m2.id = :id and m2.groupId = m.groupId and m2.artifactId = m.artifactId and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate
+        select c from CpdReportBean c, DashBoardMavenProject m, DashBoardMavenProject m2 where c.mavenProject = m and m2.id = :id and m2.groupId = m.groupId and m2.artifactId = m.artifactId and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate and c.branchName = :branchName
         ]]>
 		</query>
 		<query name="getMarkerVersionByDate">
@@ -224,10 +326,30 @@
 		    and m2.groupId = m.groupId    
 		    and m2.artifactId = m.artifactId
 		  )
+		  and c.branchName is null
 		  group by c.mavenProject.version 
 		  having min(c.dateGeneration) between :startdate and :enddate
         ]]>
 		</query>
+		      <query name="getMarkerVersionByDateByBranchName">
+            <![CDATA[
+        select c.mavenProject.version, min(c.dateGeneration) from CpdReportBean c
+        where c.mavenProject.id in (
+           select
+            m.id   
+           from
+            DashBoardMavenProject m,
+            DashBoardMavenProject m2   
+           where
+            m2.id = :id    
+            and m2.groupId = m.groupId    
+            and m2.artifactId = m.artifactId
+          )
+          and c.branchName = :branchName
+          group by c.mavenProject.version 
+          having min(c.dateGeneration) between :startdate and :enddate
+        ]]>
+        </query>
 	</union-subclass>
 	<!-- org.codehaus.mojo.dashboard.report.plugin.beans.PmdReportBean root -->
 	<!-- table="PmdReportBean"  -->
@@ -242,14 +364,24 @@
 		</query>
 		<query name="getPmdByPeriodByVersion">
 			<![CDATA[
-		select c from PmdReportBean c,DashBoardMavenProject m where c.mavenProject = m and m.id = :id and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate
+		select c from PmdReportBean c,DashBoardMavenProject m where c.mavenProject = m and m.id = :id and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate  and c.branchName is null
 		]]>
 		</query>
+        <query name="getPmdByPeriodByVersionByBranchName">
+            <![CDATA[
+        select c from PmdReportBean c,DashBoardMavenProject m where c.mavenProject = m and m.id = :id and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate and c.branchName = :branchName
+        ]]>
+        </query>
 		<query name="getPmdByPeriod">
 			<![CDATA[
-        select c from PmdReportBean c, DashBoardMavenProject m, DashBoardMavenProject m2 where c.mavenProject = m and m2.id = :id and m2.groupId = m.groupId and m2.artifactId = m.artifactId and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate
+        select c from PmdReportBean c, DashBoardMavenProject m, DashBoardMavenProject m2 where c.mavenProject = m and m2.id = :id and m2.groupId = m.groupId and m2.artifactId = m.artifactId and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate and c.branchName is null
         ]]>
 		</query>
+		<query name="getPmdByPeriodByBranchName">
+            <![CDATA[
+        select c from PmdReportBean c, DashBoardMavenProject m, DashBoardMavenProject m2 where c.mavenProject = m and m2.id = :id and m2.groupId = m.groupId and m2.artifactId = m.artifactId and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate and c.branchName = :branchName
+        ]]>
+        </query>
 		<query name="getMarkerVersionByDate">
 			<![CDATA[
         select c.mavenProject.version, min(c.dateGeneration) from PmdReportBean c
@@ -264,10 +396,30 @@
 		    and m2.groupId = m.groupId    
 		    and m2.artifactId = m.artifactId
 		  )
+		  and c.branchName is null
 		  group by c.mavenProject.version 
 		  having min(c.dateGeneration) between :startdate and :enddate
         ]]>
 		</query>
+		<query name="getMarkerVersionByDateByBranchName">
+            <![CDATA[
+        select c.mavenProject.version, min(c.dateGeneration) from PmdReportBean c
+        where c.mavenProject.id in (
+           select
+            m.id   
+           from
+            DashBoardMavenProject m,
+            DashBoardMavenProject m2   
+           where
+            m2.id = :id    
+            and m2.groupId = m.groupId    
+            and m2.artifactId = m.artifactId
+          )
+          and c.branchName = :branchName
+          group by c.mavenProject.version 
+          having min(c.dateGeneration) between :startdate and :enddate
+        ]]>
+        </query>
 	</union-subclass>
 	<!-- org.codehaus.mojo.dashboard.report.plugin.beans.SurefireReportBean root -->
 	<!-- table="SurefireReportBean"  -->
@@ -286,12 +438,22 @@
 		</query>
 		<query name="getSurefireByPeriodByVersion">
 			<![CDATA[
-		select c from SurefireReportBean c,DashBoardMavenProject m where c.mavenProject = m and m.id = :id and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate
+		select c from SurefireReportBean c,DashBoardMavenProject m where c.mavenProject = m and m.id = :id and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate and c.branchName is null
 		]]>
 		</query>
-		<query name="getSurefireByPeriod">
+        <query name="getSurefireByPeriodByVersionByBranchName">
+            <![CDATA[
+        select c from SurefireReportBean c,DashBoardMavenProject m where c.mavenProject = m and m.id = :id and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate and c.branchName = :branchName
+        ]]>
+        </query>
+        <query name="getSurefireByPeriod">
+            <![CDATA[
+        select c from SurefireReportBean c, DashBoardMavenProject m, DashBoardMavenProject m2 where c.mavenProject = m and m2.id = :id and m2.groupId = m.groupId and m2.artifactId = m.artifactId and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate and c.branchName is null
+        ]]>
+        </query>
+		<query name="getSurefireByPeriodByBranchName">
 			<![CDATA[
-        select c from SurefireReportBean c, DashBoardMavenProject m, DashBoardMavenProject m2 where c.mavenProject = m and m2.id = :id and m2.groupId = m.groupId and m2.artifactId = m.artifactId and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate
+        select c from SurefireReportBean c, DashBoardMavenProject m, DashBoardMavenProject m2 where c.mavenProject = m and m2.id = :id and m2.groupId = m.groupId and m2.artifactId = m.artifactId and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate and c.branchName = :branchName
         ]]>
 		</query>
 		<query name="getMarkerVersionByDate">
@@ -308,10 +470,30 @@
 		    and m2.groupId = m.groupId    
 		    and m2.artifactId = m.artifactId
 		  )
+		  and c.branchName is null
 		  group by c.mavenProject.version 
 		  having min(c.dateGeneration) between :startdate and :enddate
         ]]>
 		</query>
+		      <query name="getMarkerVersionByDateByBranchName">
+            <![CDATA[
+        select c.mavenProject.version, min(c.dateGeneration) from SurefireReportBean c
+        where c.mavenProject.id in (
+           select
+            m.id   
+           from
+            DashBoardMavenProject m,
+            DashBoardMavenProject m2   
+           where
+            m2.id = :id    
+            and m2.groupId = m.groupId    
+            and m2.artifactId = m.artifactId
+          )
+          and c.branchName = :branchName
+          group by c.mavenProject.version 
+          having min(c.dateGeneration) between :startdate and :enddate
+        ]]>
+        </query>
 	</union-subclass>
 	<!-- org.codehaus.mojo.dashboard.report.plugin.beans.FindBugsReportBean root -->
 	<!-- table="FindBugsReportBean"  -->
@@ -329,12 +511,22 @@
 		</query>
 		<query name="getFindBugsByPeriodByVersion">
 			<![CDATA[
-		select c from FindBugsReportBean c,DashBoardMavenProject m where c.mavenProject = m and m.id = :id and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate
+		select c from FindBugsReportBean c,DashBoardMavenProject m where c.mavenProject = m and m.id = :id and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate and c.branchName is null
 		]]>
 		</query>
-		<query name="getFindBugsByPeriod">
+        <query name="getFindBugsByPeriodByVersionByBranchName">
+            <![CDATA[
+        select c from FindBugsReportBean c,DashBoardMavenProject m where c.mavenProject = m and m.id = :id and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate and c.branchName = :branchName
+        ]]>
+        </query>
+        <query name="getFindBugsByPeriod">
+            <![CDATA[
+        select c from FindBugsReportBean c, DashBoardMavenProject m, DashBoardMavenProject m2 where c.mavenProject = m and m2.id = :id and m2.groupId = m.groupId and m2.artifactId = m.artifactId and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate and c.branchName is null
+        ]]>
+        </query>
+		<query name="getFindBugsByPeriodByBranchName">
 			<![CDATA[
-        select c from FindBugsReportBean c, DashBoardMavenProject m, DashBoardMavenProject m2 where c.mavenProject = m and m2.id = :id and m2.groupId = m.groupId and m2.artifactId = m.artifactId and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate
+        select c from FindBugsReportBean c, DashBoardMavenProject m, DashBoardMavenProject m2 where c.mavenProject = m and m2.id = :id and m2.groupId = m.groupId and m2.artifactId = m.artifactId and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate and c.branchName = :branchName
         ]]>
 		</query>
 		<query name="getMarkerVersionByDate">
@@ -351,10 +543,30 @@
 		    and m2.groupId = m.groupId    
 		    and m2.artifactId = m.artifactId
 		  )
+		  and c.branchName is null
 		  group by c.mavenProject.version 
 		  having min(c.dateGeneration) between :startdate and :enddate
         ]]>
 		</query>
+		<query name="getMarkerVersionByDateByBranchName">
+            <![CDATA[
+        select c.mavenProject.version, min(c.dateGeneration) from FindBugsReportBean c
+        where c.mavenProject.id in (
+           select
+            m.id   
+           from
+            DashBoardMavenProject m,
+            DashBoardMavenProject m2   
+           where
+            m2.id = :id    
+            and m2.groupId = m.groupId    
+            and m2.artifactId = m.artifactId
+          )
+          and c.branchName = :branchName
+          group by c.mavenProject.version 
+          having min(c.dateGeneration) between :startdate and :enddate
+        ]]>
+        </query>
 	</union-subclass>
 	<!-- org.codehaus.mojo.dashboard.report.plugin.beans.TagListReportBean root -->
 	<!-- table="TagListReportBean"  -->
@@ -369,12 +581,22 @@
 		</query>
 		<query name="getTagListByPeriodByVersion">
 			<![CDATA[
-		select c from TagListReportBean c,DashBoardMavenProject m where c.mavenProject = m and m.id = :id and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate
+		select c from TagListReportBean c,DashBoardMavenProject m where c.mavenProject = m and m.id = :id and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate and c.branchName is null
 		]]>
 		</query>
-		<query name="getTagListByPeriod">
+        <query name="getTagListByPeriodByVersionByBranchName">
+            <![CDATA[
+        select c from TagListReportBean c,DashBoardMavenProject m where c.mavenProject = m and m.id = :id and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate and c.branchName = :branchName
+        ]]>
+        </query>
+        <query name="getTagListByPeriod">
+            <![CDATA[
+        select c from TagListReportBean c, DashBoardMavenProject m, DashBoardMavenProject m2 where c.mavenProject = m and m2.id = :id and m2.groupId = m.groupId and m2.artifactId = m.artifactId and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate and c.branchName is null
+        ]]>
+        </query>
+		<query name="getTagListByPeriodByBranchName">
 			<![CDATA[
-        select c from TagListReportBean c, DashBoardMavenProject m, DashBoardMavenProject m2 where c.mavenProject = m and m2.id = :id and m2.groupId = m.groupId and m2.artifactId = m.artifactId and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate
+        select c from TagListReportBean c, DashBoardMavenProject m, DashBoardMavenProject m2 where c.mavenProject = m and m2.id = :id and m2.groupId = m.groupId and m2.artifactId = m.artifactId and c.dateGeneration >= :startdate and c.dateGeneration <= :enddate and c.branchName = :branchName
         ]]>
 		</query>
 		<query name="getMarkerVersionByDate">
@@ -391,9 +613,29 @@
 		    and m2.groupId = m.groupId    
 		    and m2.artifactId = m.artifactId
 		  )
+		  and c.branchName is null
 		  group by c.mavenProject.version 
 		  having min(c.dateGeneration) between :startdate and :enddate
         ]]>
 		</query>
+		      <query name="getMarkerVersionByDateByBranchName">
+            <![CDATA[
+        select c.mavenProject.version, min(c.dateGeneration) from TagListReportBean c
+        where c.mavenProject.id in (
+           select
+            m.id   
+           from
+            DashBoardMavenProject m,
+            DashBoardMavenProject m2   
+           where
+            m2.id = :id    
+            and m2.groupId = m.groupId    
+            and m2.artifactId = m.artifactId
+          )
+          and c.branchName = :branchName
+          group by c.mavenProject.version 
+          having min(c.dateGeneration) between :startdate and :enddate
+        ]]>
+        </query>
 	</union-subclass>
 </hibernate-mapping>
